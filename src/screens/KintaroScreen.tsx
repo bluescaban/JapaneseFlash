@@ -10,10 +10,11 @@ import {
 } from 'react-native';
 import { Audio } from 'expo-av';
 import OpenAI from 'openai';
-import { OPENAI_API_KEY } from '@env';
+import { OPENAI_API_KEY } from '../config';
 import { useVoiceRecorder } from '../hooks/useVoiceRecorder';
 import { transcribeSpeech, generateAudio, translateText } from '../services/openai';
 import { saveCard } from '../db/database';
+import CopyButton from '../components/CopyButton';
 
 // ─── Kintaro system prompt ────────────────────────────────────────────────────
 
@@ -293,8 +294,9 @@ export default function KintaroScreen() {
               // ── User bubble ──────────────────────────────────────────────
               <View style={styles.userRow}>
                 <View style={styles.userBubble}>
-                  <Text style={styles.userText}>{entry.text}</Text>
+                  <Text selectable style={styles.userText}>{entry.text}</Text>
                 </View>
+                <CopyButton text={entry.text} />
               </View>
 
             ) : entry.hasGrammarCard ? (
@@ -303,8 +305,9 @@ export default function KintaroScreen() {
                 <View style={styles.grammarCardHeader}>
                   <Text style={styles.grammarCardIcon}>📖</Text>
                   <Text style={styles.grammarCardTitle}>Grammar Breakdown</Text>
+                  <CopyButton text={entry.text} style={styles.grammarCopyBtn} />
                 </View>
-                <Text style={styles.grammarCardText}>{entry.text}</Text>
+                <Text selectable style={styles.grammarCardText}>{entry.text}</Text>
                 <TouchableOpacity
                   style={[styles.saveBtn, savingId === entry.id && styles.btnDisabled]}
                   onPress={() => handleSave(entry)}
@@ -323,7 +326,7 @@ export default function KintaroScreen() {
               <View style={styles.kintaroRow}>
                 <View style={styles.kintaroBubble}>
                   <Text style={styles.kintaroLabel}>Kintaro</Text>
-                  <Text style={styles.kintaroText}>{entry.text}</Text>
+                  <Text selectable style={styles.kintaroText}>{entry.text}</Text>
                 </View>
                 <View style={styles.bubbleActions}>
                   {entry.audioUri && (
@@ -334,6 +337,7 @@ export default function KintaroScreen() {
                       <Text style={styles.playBtnText}>▶ Play</Text>
                     </TouchableOpacity>
                   )}
+                  <CopyButton text={entry.text} />
                   <TouchableOpacity
                     style={[styles.saveBtn, savingId === entry.id && styles.btnDisabled]}
                     onPress={() => handleSave(entry)}
@@ -477,6 +481,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
+    flex: 1,
+  },
+  grammarCopyBtn: {
+    marginLeft: 'auto',
   },
   grammarCardIcon: {
     fontSize: 16,

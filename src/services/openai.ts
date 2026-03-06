@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
-import * as FileSystem from 'expo-file-system';
-import { OPENAI_API_KEY } from '@env';
+import { File, Paths } from 'expo-file-system';
+import { OPENAI_API_KEY } from '../config';
 
 const openai = new OpenAI({
   apiKey: OPENAI_API_KEY,
@@ -78,14 +78,10 @@ export async function generateAudio(
   }
 
   const arrayBuffer = await response.arrayBuffer();
-  const base64 = arrayBufferToBase64(arrayBuffer);
+  const file = new File(Paths.cache, `audio_${Date.now()}.mp3`);
+  file.write(new Uint8Array(arrayBuffer));
 
-  const fileUri = `${FileSystem.cacheDirectory}audio_${Date.now()}.mp3`;
-  await FileSystem.writeAsStringAsync(fileUri, base64, {
-    encoding: FileSystem.EncodingType.Base64,
-  });
-
-  return fileUri;
+  return file.uri;
 }
 
 // ─── transcribeSpeech ──────────────────────────────────────────────────────────
@@ -122,17 +118,4 @@ export async function transcribeSpeech(
 
   const data = await response.json();
   return data.text ?? '';
-}
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-function arrayBufferToBase64(buffer: ArrayBuffer): string {
-  let binary = '';
-  const bytes = new Uint8Array(buffer);
-  // Process in chunks to avoid call stack overflow on large files
-  const chunkSize = 8192;
-  for (let i = 0; i < bytes.byteLength; i += chunkSize) {
-    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
-  }
-  return btoa(binary);
 }

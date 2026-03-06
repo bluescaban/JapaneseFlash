@@ -13,6 +13,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { Audio } from 'expo-av';
 import { Flashcard, getAllCards, getDueCards, deleteCard } from '../db/database';
 import ReviewScreen from './ReviewScreen';
+import CopyButton from '../components/CopyButton';
 
 export default function DeckScreen() {
   const [cards, setCards] = useState<Flashcard[]>([]);
@@ -194,8 +195,11 @@ export default function DeckScreen() {
 
             {/* English side */}
             <View style={styles.modalSection}>
-              <Text style={styles.modalLabel}>ENGLISH</Text>
-              <Text style={styles.modalEnglish}>{selectedCard.englishText}</Text>
+              <View style={styles.modalSectionHeader}>
+                <Text style={styles.modalLabel}>ENGLISH</Text>
+                <CopyButton text={selectedCard.englishText} />
+              </View>
+              <Text selectable style={styles.modalEnglish}>{selectedCard.englishText}</Text>
               <TouchableOpacity
                 style={[styles.playBtn, (!selectedCard.enAudioPath || playingAudio) && styles.playBtnDisabled]}
                 onPress={() => playAudio(selectedCard.enAudioPath)}
@@ -211,10 +215,13 @@ export default function DeckScreen() {
 
             {/* Japanese side */}
             <View style={styles.modalSection}>
-              <Text style={styles.modalLabel}>JAPANESE</Text>
-              <Text style={styles.modalJapanese}>{selectedCard.japaneseText}</Text>
+              <View style={styles.modalSectionHeader}>
+                <Text style={styles.modalLabel}>JAPANESE</Text>
+                <CopyButton text={selectedCard.romajiText ? `${selectedCard.japaneseText}\n${selectedCard.romajiText}` : selectedCard.japaneseText} />
+              </View>
+              <Text selectable style={styles.modalJapanese}>{selectedCard.japaneseText}</Text>
               {selectedCard.romajiText ? (
-                <Text style={styles.modalRomaji}>{selectedCard.romajiText}</Text>
+                <Text selectable style={styles.modalRomaji}>{selectedCard.romajiText}</Text>
               ) : null}
               <TouchableOpacity
                 style={[styles.playBtn, (!selectedCard.jpAudioPath || playingAudio) && styles.playBtnDisabled]}
@@ -232,8 +239,11 @@ export default function DeckScreen() {
             {/* Grammar note (Kintaro cards) */}
             {selectedCard.grammarNote ? (
               <View style={styles.modalSection}>
-                <Text style={styles.modalLabel}>GRAMMAR NOTE</Text>
-                <Text style={styles.modalGrammar}>{selectedCard.grammarNote}</Text>
+                <View style={styles.modalSectionHeader}>
+                  <Text style={styles.modalLabel}>GRAMMAR NOTE</Text>
+                  <CopyButton text={selectedCard.grammarNote} />
+                </View>
+                <Text selectable style={styles.modalGrammar}>{selectedCard.grammarNote}</Text>
               </View>
             ) : null}
 
@@ -420,6 +430,12 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#4A90D9',
   },
+  modalSectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
   modalSection: {
     backgroundColor: '#fff',
     borderRadius: 14,
@@ -436,7 +452,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#A0ADB5',
     letterSpacing: 1,
-    marginBottom: 8,
   },
   modalEnglish: {
     fontSize: 20,

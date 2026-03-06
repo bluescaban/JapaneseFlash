@@ -12,6 +12,7 @@ import {
 import { Audio } from 'expo-av';
 import { translateText, generateAudio, TranslationResult } from '../services/openai';
 import { saveCard } from '../db/database';
+import CopyButton from '../components/CopyButton';
 
 type Direction = 'en-to-jp' | 'jp-to-en';
 
@@ -176,10 +177,14 @@ export default function TranslatorScreen() {
         <>
           <Text style={styles.sectionLabel}>{outputLabel}</Text>
           <View style={styles.outputCard}>
-            <Text style={styles.outputMain}>{result.translatedText}</Text>
+            <Text selectable style={styles.outputMain}>{result.translatedText}</Text>
             {result.romajiText ? (
-              <Text style={styles.outputRomaji}>{result.romajiText}</Text>
+              <Text selectable style={styles.outputRomaji}>{result.romajiText}</Text>
             ) : null}
+            <CopyButton
+              text={result.romajiText ? `${result.translatedText}\n${result.romajiText}` : result.translatedText}
+              style={styles.copyButton}
+            />
           </View>
 
           <View style={styles.actionRow}>
@@ -330,6 +335,10 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#7F8C8D',
     fontStyle: 'italic',
+    marginBottom: 12,
+  },
+  copyButton: {
+    alignSelf: 'flex-start',
   },
   actionRow: {
     flexDirection: 'row',

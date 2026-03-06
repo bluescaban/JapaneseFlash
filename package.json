@@ -13,6 +13,7 @@
     "@react-navigation/native": "^7.1.33",
     "expo": "~54.0.0",
     "expo-av": "^16.0.8",
+    "expo-clipboard": "^55.0.8",
     "expo-file-system": "^55.0.10",
     "expo-sqlite": "^55.0.10",
     "expo-status-bar": "~3.0.9",
